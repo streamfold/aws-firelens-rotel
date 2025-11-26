@@ -61,9 +61,9 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 		}
 	}
 
-	// Set ROTEL_RESOURCE_ATTRIBUTES if resource attributes are available
+	// Set ROTEL_OTEL_RESOURCE_ATTRIBUTES if resource attributes are available
 	if config.ResourceAttributes != "" {
-		existing := os.Getenv("ROTEL_RESOURCE_ATTRIBUTES")
+		existing := os.Getenv("ROTEL_OTEL_RESOURCE_ATTRIBUTES")
 		
 		value := config.ResourceAttributes
 		if existing != "" {
@@ -71,8 +71,8 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 			value = fmt.Sprintf("%s,%s", config.ResourceAttributes, existing)
 		}
 		
-		if err := os.Setenv("ROTEL_RESOURCE_ATTRIBUTES", value); err != nil {
-			return fmt.Errorf("failed to set ROTEL_RESOURCE_ATTRIBUTES: %w", err)
+		if err := os.Setenv("ROTEL_OTEL_RESOURCE_ATTRIBUTES", value); err != nil {
+			return fmt.Errorf("failed to set ROTEL_OTEL_RESOURCE_ATTRIBUTES: %w", err)
 		}
 	}
 

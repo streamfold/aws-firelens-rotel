@@ -80,7 +80,7 @@ Format: Path to Unix socket
 
 Example: `/var/run/fluent.sock`
 
-### ROTEL_RESOURCE_ATTRIBUTES
+### ROTEL_OTEL_RESOURCE_ATTRIBUTES
 
 Extracted from the `[FILTER]` section with `Name record_modifier`. All `Record` entries are collected as key=value pairs separated by commas.
 
@@ -117,7 +117,7 @@ Run the launcher:
 This will set:
 - `ROTEL_FIRELENS_RECEIVER_ENDPOINT=127.0.0.1:24224`
 - `ROTEL_FIRELENS_RECEIVER_SOCKET=/var/run/fluent.sock`
-- `ROTEL_RESOURCE_ATTRIBUTES=ecs_cluster=firelenstest,ecs_task_arn=arn:aws:ecs:us-east-2:279234357137:task/firelenstest/72aa3d1989dc4561b975631f36170c09,ecs_task_definition=firelens-test1:8`
+- `ROTEL_OTEL_RESOURCE_ATTRIBUTES=ecs_cluster=firelenstest,ecs_task_arn=arn:aws:ecs:us-east-2:279234357137:task/firelenstest/72aa3d1989dc4561b975631f36170c09,ecs_task_definition=firelens-test1:8`
 
 And then execute the Rotel binary at `/usr/local/bin/rotel`.
 
@@ -131,7 +131,7 @@ cat > test-rotel.sh << 'EOF'
 #!/bin/bash
 echo "ROTEL_FIRELENS_RECEIVER_ENDPOINT=$ROTEL_FIRELENS_RECEIVER_ENDPOINT"
 echo "ROTEL_FIRELENS_RECEIVER_SOCKET=$ROTEL_FIRELENS_RECEIVER_SOCKET"
-echo "ROTEL_RESOURCE_ATTRIBUTES=$ROTEL_RESOURCE_ATTRIBUTES"
+echo "ROTEL_OTEL_RESOURCE_ATTRIBUTES=$ROTEL_OTEL_RESOURCE_ATTRIBUTES"
 EOF
 
 chmod +x test-rotel.sh

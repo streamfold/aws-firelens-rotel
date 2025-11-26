@@ -26,7 +26,7 @@ RUN git clone https://github.com/streamfold/rotel.git . && \
     git checkout fluent
 
 # Build release version of rotel
-RUN cargo build --release
+RUN cargo build --features fluent_receiver --release
 
 # Stage 3: Final minimal image
 FROM debian:trixie-slim
