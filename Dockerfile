@@ -21,9 +21,10 @@ RUN apt-get update && \
     apt-get install -y git cmake openssl protobuf-compiler libzstd-dev libclang-dev && \
     rm -rf /var/lib/apt/lists/*
 
+ARG ROTEL_SHA=fluent
 # Clone rotel and checkout fluent branch
 RUN git clone https://github.com/streamfold/rotel.git . && \
-    git checkout fluent
+    git checkout ${ROTEL_SHA}
 
 # Build release version of rotel
 RUN cargo build --features fluent_receiver --release
