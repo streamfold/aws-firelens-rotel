@@ -64,13 +64,13 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 	// Set ROTEL_OTEL_RESOURCE_ATTRIBUTES if resource attributes are available
 	if config.ResourceAttributes != "" {
 		existing := os.Getenv("ROTEL_OTEL_RESOURCE_ATTRIBUTES")
-		
+
 		value := config.ResourceAttributes
 		if existing != "" {
 			// Keep the existing and add to the end for precedence
 			value = fmt.Sprintf("%s,%s", config.ResourceAttributes, existing)
 		}
-		
+
 		if err := os.Setenv("ROTEL_OTEL_RESOURCE_ATTRIBUTES", value); err != nil {
 			return fmt.Errorf("failed to set ROTEL_OTEL_RESOURCE_ATTRIBUTES: %w", err)
 		}
@@ -80,7 +80,7 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 	if err := os.Setenv("ROTEL_RECEIVERS", "fluent,otlp"); err != nil {
 		return fmt.Errorf("failed to set ROTEL_RECEIVERS: %w", err)
 	}
-	
+
 	// Attempt to detect if no exporter config has been set, since this can
 	// result in rotel immediately exiting.
 	if os.Getenv("ROTEL_EXPORTER") == "" && os.Getenv("ROTEL_EXPORTERS") == "" {
@@ -91,7 +91,7 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 			}
 		}
 	}
-	
+
 	return nil
 }
 

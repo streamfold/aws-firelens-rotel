@@ -37,9 +37,9 @@ func ParseFluentBitConfig(filename string) (*FluentBitConfig, error) {
 			if listen != "" && port != "" {
 				config.ReceiverEndpoint = fmt.Sprintf("%s:%s", listen, port)
 			}
-		}		
+		}
 	}
-	
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
@@ -75,7 +75,7 @@ func ParseFluentBitConfig(filename string) (*FluentBitConfig, error) {
 			sectionName = value
 			continue
 		}
-		
+
 		// Handle based on section type
 		switch sectionType {
 		case "INPUT":
