@@ -103,7 +103,7 @@ Set the `S3_OTLP_LOG_PROCESSORS` environment variable on the log_router containe
 }
 ```
 
-**Important**: Your ECS task role must include S3 permissions to download the processor files. Add the following to your task role IAM policy:
+**Important**: Your ECS task role must include S3 permissions to download the processor files.
 
 **Features**:
 - Multiple S3 URIs can be specified as a comma-separated list
