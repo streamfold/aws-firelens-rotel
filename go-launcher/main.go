@@ -243,7 +243,6 @@ func downloadS3LogProcessors() error {
 		if err := os.Setenv("ROTEL_OTLP_WITH_LOGS_PROCESSOR", pathList); err != nil {
 			return fmt.Errorf("failed to set ROTEL_OTLP_WITH_LOGS_PROCESSOR: %w", err)
 		}
-		fmt.Printf("Set ROTEL_OTLP_WITH_LOGS_PROCESSOR=%s\n", pathList)
 	}
 
 	return nil
