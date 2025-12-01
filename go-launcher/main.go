@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 func main() {
@@ -37,6 +42,12 @@ func main() {
 	// Set environment variables from parsed config
 	if err := setEnvironmentVariables(config); err != nil {
 		fmt.Fprintf(os.Stderr, "Error setting environment variables: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Download S3 log processors if configured
+	if err := downloadS3LogProcessors(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error downloading S3 log processors: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -118,6 +129,121 @@ func executeRotel(rotelPath string) error {
 	// Execute the command
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("rotel execution failed: %w", err)
+	}
+
+	return nil
+}
+
+// S3Object represents a parsed S3 path
+type S3Object struct {
+	Bucket string
+	Key    string
+}
+
+// parseS3Path parses an S3 path and returns the bucket and key
+func parseS3Path(s3Path string) (*S3Object, error) {
+	// Path format: s3://bucket-name/path/to/file
+	if !strings.HasPrefix(s3Path, "s3://") {
+		return nil, fmt.Errorf("invalid S3 path (must start with s3://): %s", s3Path)
+	}
+
+	// Remove s3:// prefix
+	path := strings.TrimPrefix(s3Path, "s3://")
+
+	// Split bucket and key
+	slashIdx := strings.Index(path, "/")
+	if slashIdx == -1 {
+		return nil, fmt.Errorf("S3 path missing key: %s", s3Path)
+	}
+
+	return &S3Object{
+		Bucket: path[:slashIdx],
+		Key:    path[slashIdx+1:],
+	}, nil
+}
+
+// downloadS3LogProcessors downloads S3 objects specified in S3_OTLP_LOG_PROCESSORS
+func downloadS3LogProcessors() error {
+	s3ARNs := os.Getenv("S3_OTLP_LOG_PROCESSORS")
+	if s3ARNs == "" {
+		// No log processors configured, skip
+		return nil
+	}
+
+	// Parse comma-separated list
+	arns := strings.Split(s3ARNs, ",")
+	if len(arns) == 0 {
+		return nil
+	}
+
+	// Create directory for log processors
+	processorDir := "/tmp/log_processors"
+	if err := os.MkdirAll(processorDir, 0755); err != nil {
+		return fmt.Errorf("failed to create log processor directory: %w", err)
+	}
+
+	// Initialize AWS S3 client
+	ctx := context.Background()
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load AWS config: %w", err)
+	}
+
+	s3Client := s3.NewFromConfig(cfg)
+
+	// Download each S3 object
+	var downloadedPaths []string
+	for i, arn := range arns {
+		arn = strings.TrimSpace(arn)
+		if arn == "" {
+			continue
+		}
+
+		// Parse S3 path
+		s3Obj, err := parseS3Path(arn)
+		if err != nil {
+			return fmt.Errorf("failed to parse S3 path: %w", err)
+		}
+
+		// Determine filename with prefix
+		filename := filepath.Base(s3Obj.Key)
+		prefixedFilename := fmt.Sprintf("%02d_%s", i+1, filename)
+		destPath := filepath.Join(processorDir, prefixedFilename)
+
+		// Download the object
+		fmt.Printf("Downloading S3 object s3://%s/%s to %s\n", s3Obj.Bucket, s3Obj.Key, destPath)
+
+		result, err := s3Client.GetObject(ctx, &s3.GetObjectInput{
+			Bucket: &s3Obj.Bucket,
+			Key:    &s3Obj.Key,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to download s3://%s/%s: %w", s3Obj.Bucket, s3Obj.Key, err)
+		}
+		defer result.Body.Close()
+
+		// Write to file
+		destFile, err := os.Create(destPath)
+		if err != nil {
+			return fmt.Errorf("failed to create file %s: %w", destPath, err)
+		}
+
+		_, err = destFile.ReadFrom(result.Body)
+		destFile.Close()
+		if err != nil {
+			return fmt.Errorf("failed to write file %s: %w", destPath, err)
+		}
+
+		downloadedPaths = append(downloadedPaths, destPath)
+	}
+
+	// Set environment variable with downloaded file paths
+	if len(downloadedPaths) > 0 {
+		pathList := strings.Join(downloadedPaths, ",")
+		if err := os.Setenv("ROTEL_OTLP_WITH_LOGS_PROCESSOR", pathList); err != nil {
+			return fmt.Errorf("failed to set ROTEL_OTLP_WITH_LOGS_PROCESSOR: %w", err)
+		}
+		fmt.Printf("Set ROTEL_OTLP_WITH_LOGS_PROCESSOR=%s\n", pathList)
 	}
 
 	return nil
