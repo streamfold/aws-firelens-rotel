@@ -83,8 +83,8 @@ The launcher automatically sets these environment variables based on the Fluent 
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ROTEL_FIRELENS_RECEIVER_ENDPOINT` | TCP endpoint for Fluent Bit forward protocol | `127.0.0.1:24224` |
-| `ROTEL_FIRELENS_RECEIVER_SOCKET` | Unix socket path for Fluent Bit forward protocol | `/var/run/fluent.sock` |
+| `ROTEL_FLUENT_RECEIVER_ENDPOINT` | TCP endpoint for Fluent Bit forward protocol | `127.0.0.1:24224` |
+| `ROTEL_FLUENT_RECEIVER_SOCKET_PATH` | Unix socket path for Fluent Bit forward protocol | `/var/run/fluent.sock` |
 | `ROTEL_OTEL_RESOURCE_ATTRIBUTES` | Resource attributes from ECS attributes | `ecs_cluster=prod,ecs_task_arn=arn:aws:...` |
 
 ### OTLP Log Processors from S3

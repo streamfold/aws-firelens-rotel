@@ -67,8 +67,8 @@ func setEnvironmentVariables(config *FluentBitConfig) error {
 	}
 
 	if config.ReceiverSocket != "" {
-		if err := os.Setenv("ROTEL_FLUENT_RECEIVER_SOCKET", config.ReceiverSocket); err != nil {
-			return fmt.Errorf("failed to set ROTEL_FLUENT_RECEIVER_SOCKET: %w", err)
+		if err := os.Setenv("ROTEL_FLUENT_RECEIVER_SOCKET_PATH", config.ReceiverSocket); err != nil {
+			return fmt.Errorf("failed to set ROTEL_FLUENT_RECEIVER_SOCKET_PATH: %w", err)
 		}
 	}
 
