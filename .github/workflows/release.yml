@@ -44,7 +44,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           build-args: |
-            ROTEL_SHA=ec30d9f4a4cf479316247231efb543a11bbfa70d
+            ROTEL_SHA=bcee1a7c9993fc266a999ec5ca987b3059aeef98
 
       # - name: Update Docker Hub description
       #   uses: peter-evans/dockerhub-description@v4
