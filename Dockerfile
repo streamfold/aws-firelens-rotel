@@ -21,10 +21,8 @@ RUN apt-get update && \
     apt-get install -y git cmake openssl protobuf-compiler libzstd-dev libclang-dev python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN dpkg --list | grep python
-
-ARG ROTEL_SHA=fluent
-# Clone rotel and checkout fluent branch
+ARG ROTEL_SHA=main
+# Clone rotel and checkout specific branch/sha
 RUN git clone https://github.com/streamfold/rotel.git . && \
     git checkout ${ROTEL_SHA}
 
@@ -41,17 +39,11 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ca-certificates \
     python3-dev \
-    python3-venv \
-    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy built binaries from previous stages
 COPY --from=go-builder /build/launcher /usr/local/bin/launcher
 COPY --from=rust-builder /build/target/release/rotel /usr/local/bin/rotel
-
-# Install Rotel Python SDK
-RUN python3 -m venv /rotel-venv && \
-    /rotel-venv/bin/pip install rotel-sdk --pre
 
 # Create entrypoint script
 COPY scripts/entrypoint.sh /entrypoint.sh

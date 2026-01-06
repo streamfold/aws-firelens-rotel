@@ -4,8 +4,6 @@ A lightweight, high-performance integration that combines [AWS FireLens](https:/
 
 This replaces the use of Fluent Bit or Fluentd as the log_router container.
 
-**NOTE**: This is an early release built for experimenting. Please take that in mind and share use cases!
-
 ## Benefits
 
 * Native OpenTelmetry support, no need for additional containers/collectors
@@ -92,7 +90,7 @@ The launcher automatically sets these environment variables based on the Fluent 
 You can configure OTLP log processors to transform or filter logs before they are exported. The launcher supports loading processor configurations from S3.
 
 See the Python [Processor SDK](https://rotel.dev/docs/category/processor-sdk) for how to construct these processors. The aws-firelens-rotel environment
-is automatically setup with a Python 3.13 venv.
+is automatically setup with Python 3.13.
 
 Set the `S3_OTLP_LOG_PROCESSORS` environment variable on the log_router container with a comma-separated list of S3 URIs:
 
