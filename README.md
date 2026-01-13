@@ -2,7 +2,7 @@
 
 A lightweight, high-performance integration that combines [AWS FireLens](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_firelens.html) with [Rotel](https://rotel.dev), a high-performance and resource-efficient OpenTelemetry collection data plane written in Rust. This project enables seamless collection and forwarding of container logs and metrics from Amazon ECS tasks to OpenTelemetry-compatible backends.
 
-This replaces the use of Fluent Bit or Fluentd as the log_router container.
+This replaces the use of Fluent Bit or Fluentd as the `log_router` container.
 
 ## Benefits
 
@@ -28,7 +28,7 @@ automatically converted to OTLP log format.
 ### Using with AWS ECS
 
 1. Add the FireLens Rotel container to your ECS task definition.
-2. Set Rotel environment variable [configuration](https://rotel.dev/docs/category/configuration) variables on the _log_router_ container.
+2. Set Rotel environment variable [configuration](https://rotel.dev/docs/category/configuration) variables on the `log_router` container.
 
 For example, to export logs, metrics and traces to ClickHouse Cloud:
 
@@ -45,7 +45,7 @@ For example, to export logs, metrics and traces to ClickHouse Cloud:
       }
     },
     {
-      "name": "log-router",
+      "name": "log_router",
       "image": "streamfold/aws-firelens-rotel:latest",
       "firelensConfiguration": {
         "type": "fluentbit"
@@ -92,7 +92,7 @@ You can configure OTLP log processors to transform or filter logs before they ar
 See the Python [Processor SDK](https://rotel.dev/docs/category/processor-sdk) for how to construct these processors. The aws-firelens-rotel environment
 is automatically setup with Python 3.13.
 
-Set the `S3_OTLP_LOG_PROCESSORS` environment variable on the log_router container with a comma-separated list of S3 URIs:
+Set the `S3_OTLP_LOG_PROCESSORS` environment variable on the `log_router` container with a comma-separated list of S3 URIs:
 
 ```json
 {
