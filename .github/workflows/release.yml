@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      ROTEL_SHA: "832e534b367dfbff18905e6df78fa42fe3bcb3f5"
+      ROTEL_SHA: "v0.1.9"
 
     steps:
       - name: Checkout code
